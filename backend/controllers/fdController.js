@@ -64,20 +64,19 @@ const createFD = async (req, res) => {
 
 // Get All FDs
 const getAllFDs = async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM fd_master ORDER BY id DESC"
-    );
-    res.json(result.rows)
-
-    res.status(200).json(result.rows);
-
-  } catch (error) {
-    res.status(500).json({
-      error: error.message
-    });
-  }
-};
+    try {
+      const result = await pool.query(
+        "SELECT * FROM fd_master ORDER BY id DESC"
+      );
+  
+      return res.status(200).json(result.rows);
+  
+    } catch (error) {
+      return res.status(500).json({
+        error: error.message
+      });
+    }
+  };
 const deleteFD = async (req, res) => {
     try {
       const { id } = req.params;

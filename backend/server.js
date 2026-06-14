@@ -30,6 +30,24 @@ app.get('/', async (req, res) => {
     });
   }
 });
+const sendMaturityReminder = require("./services/emailService");
+
+app.get("/test-email", async (req, res) => {
+  try {
+    await sendMaturityReminder({
+      customer_name: "Test User",
+      fd_number: "FD001",
+      maturity_date: "2026-06-20",
+      maturity_value: "105000",
+      email: "YOUR_EMAIL@gmail.com"
+    });
+
+    res.send("Email Sent");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 

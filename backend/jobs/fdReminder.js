@@ -6,18 +6,21 @@ cron.schedule("0 9 * * *", async () => {
   console.log("Checking FD maturity reminders...");
 
   try {
-    const [fds] = await db.query(`
+    const result = await db.query(`
       SELECT *
-      FROM fixed_deposits
-      WHERE DATE(maturity_date) =
-      DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+      FROM fd_master
+      WHERE maturity_date::date =
+      CURRENT_DATE + INTERVAL '1 day'
     `);
+
+    const fds = result.rows;
 
     for (const fd of fds) {
       await sendMaturityReminder(fd);
       console.log(`Reminder sent to ${fd.email}`);
     }
+
   } catch (error) {
-    console.error(error);
+    console.error("Reminder Error:", error);
   }
 });

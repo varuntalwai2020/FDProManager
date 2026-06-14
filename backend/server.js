@@ -35,11 +35,12 @@ const sendMaturityReminder = require("./services/emailService");
 app.get("/test-email", async (req, res) => {
   try {
     await sendMaturityReminder({
+        email:"varuntalwai2020@gmail.com",
       customer_name: "Test User",
       fd_number: "FD001",
-      maturity_date: "2026-06-20",
+      maturity_date: "2026-06-15",
       maturity_value: "105000",
-      email: "YOUR_EMAIL@gmail.com"
+
     });
 
     res.send("Email Sent");

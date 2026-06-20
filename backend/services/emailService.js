@@ -1,19 +1,19 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: true,
+  host: "smtp-relay.brevo.com",
+  port: process.env.EMAIL_PORT,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_PASS
   }
 });
 
 const sendMaturityReminder = async (fd) => {
   try {
-    await transporter.sendMail({
-      from: `"FD Management System" <${process.env.EMAIL_USER}>`,
+    const info = await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
       to: fd.email,
       subject: "FD Maturity Reminder",
       html: `
@@ -21,38 +21,21 @@ const sendMaturityReminder = async (fd) => {
 
         <p>Dear ${fd.customer_name},</p>
 
-        <p>Your Fixed Deposit is nearing maturity.</p>
+        <p>Your FD Number <b>${fd.fd_number}</b>
+        will mature on <b>${fd.maturity_date}</b>.</p>
 
-        <table border="1" cellpadding="8" cellspacing="0">
-          <tr>
-            <td><b>FD Number</b></td>
-            <td>${fd.fd_number}</td>
-          </tr>
-          <tr>
-            <td><b>Bank</b></td>
-            <td>${fd.bank_name}</td>
-          </tr>
-          <tr>
-            <td><b>Maturity Date</b></td>
-            <td>${fd.maturity_date}</td>
-          </tr>
-          <tr>
-            <td><b>Maturity Value</b></td>
-            <td>₹${fd.maturity_value}</td>
-          </tr>
-        </table>
+        <p>Maturity Value: ₹${fd.maturity_value}</p>
 
-        <br/>
-
-        <p>Please contact your bank for renewal or closure of the FD.</p>
-
-        <p>Regards,<br/>FD Management System</p>
+        <p>Please contact the bank for renewal or closure.</p>
       `
     });
 
-    console.log(`Email sent successfully to ${fd.email}`);
+    console.log("Email sent:", info.messageId);
+    return info;
+
   } catch (error) {
     console.error("Email sending failed:", error);
+    throw error;
   }
 };
 

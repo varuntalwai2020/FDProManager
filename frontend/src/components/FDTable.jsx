@@ -185,7 +185,21 @@ function FDTable() {
                 <td>
                   {new Date(fd.maturity_date).toLocaleDateString()}
                 </td>
-                <td>{fd.status}</td>
+                <td
+  style={{
+    color:
+      new Date(fd.maturity_date).setHours(0, 0, 0, 0) <=
+      new Date().setHours(0, 0, 0, 0)
+        ? "red"
+        : "limegreen",
+    fontWeight: "bold"
+  }}
+>
+  {new Date(fd.maturity_date).setHours(0, 0, 0, 0) <=
+  new Date().setHours(0, 0, 0, 0)
+    ? "MATURED"
+    : "ACTIVE"}
+</td>
 
                 <td>
                   <button
